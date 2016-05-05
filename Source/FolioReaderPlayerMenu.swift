@@ -211,12 +211,6 @@ class FolioReaderPlayerMenu: UIViewController, SMSegmentViewDelegate {
         // Dispose of any resources that can be recreated.
     }
 
-    // MARK: - Status Bar
-
-    override func prefersStatusBarHidden() -> Bool {
-        return readerConfig.shouldHideNavigationOnTap == true
-    }
-
     // MARK: - SMSegmentView delegate
 
     func segmentView(segmentView: SMSegmentView, didSelectSegmentAtIndex index: Int) {
@@ -267,10 +261,6 @@ class FolioReaderPlayerMenu: UIViewController, SMSegmentViewDelegate {
 
     func closeView() {
         dismissViewControllerAnimated(true, completion: nil)
-
-        if readerConfig.shouldHideNavigationOnTap == false {
-            FolioReader.sharedInstance.readerCenter.showBars()
-        }
     }
 
     // MARK: - Gestures

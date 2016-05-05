@@ -154,12 +154,6 @@ class FolioReaderFontsMenu: UIViewController, SMSegmentViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - Status Bar
-    
-    override func prefersStatusBarHidden() -> Bool {
-        return readerConfig.shouldHideNavigationOnTap == true
-    }
-    
     // MARK: - SMSegmentView delegate
     
     func segmentView(segmentView: SMSegmentView, didSelectSegmentAtIndex index: Int) {
@@ -178,7 +172,6 @@ class FolioReaderFontsMenu: UIViewController, SMSegmentViewDelegate {
                 UIView.animateWithDuration(0.6, animations: {
                     self.menuView.backgroundColor = UIColor.whiteColor()
                     readerCenter.collectionView.backgroundColor = UIColor.whiteColor()
-                    readerCenter.configureNavBar()
                     readerCenter.scrollScrubber.updateColors()
                 })
                 readerSidePanel.tableView.backgroundColor = readerConfig.menuBackgroundColor
@@ -189,7 +182,6 @@ class FolioReaderFontsMenu: UIViewController, SMSegmentViewDelegate {
                 UIView.animateWithDuration(0.6, animations: {
                     self.menuView.backgroundColor = readerConfig.nightModeMenuBackground
                     readerCenter.collectionView.backgroundColor = readerConfig.nightModeBackground
-                    readerCenter.configureNavBar()
                     readerCenter.scrollScrubber.updateColors()
                 })
                 readerSidePanel.tableView.backgroundColor = readerConfig.nightModeMenuBackground
@@ -256,10 +248,6 @@ class FolioReaderFontsMenu: UIViewController, SMSegmentViewDelegate {
     
     func tapGesture() {
         dismissViewControllerAnimated(true, completion: nil)
-        
-        if readerConfig.shouldHideNavigationOnTap == false {
-            FolioReader.sharedInstance.readerCenter.showBars()
-        }
     }
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {

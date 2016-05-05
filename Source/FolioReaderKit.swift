@@ -134,6 +134,12 @@ public class FolioReader : NSObject {
         parentViewController.presentViewController(reader, animated: animated, completion: nil)
     }
     
+    public class func pushReader(navigationViewController: UINavigationController, epubPath: String, config: FolioReaderConfig, shouldRemoveEpub: Bool = true, animated: Bool = true) {
+        let reader = FolioReaderContainer(config: config, epubPath: epubPath, removeEpub: shouldRemoveEpub)
+        FolioReader.sharedInstance.readerContainer = reader
+        navigationViewController.pushViewController(reader, animated: animated)
+    }
+    
     // MARK: - Application State
     
     /**
@@ -454,58 +460,8 @@ internal extension UIImage {
 }
 
 extension UIViewController: UIGestureRecognizerDelegate {
-    
-    func setCloseButton() {
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(readerImageNamed: "icon-close"), style: UIBarButtonItemStyle.Plain, target: self, action:#selector(UIViewController.dismiss))
-    }
-    
     func dismiss() {
         self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    // MARK: - NavigationBar
-    
-    func setTransparentNavigation() {
-        let navBar = self.navigationController?.navigationBar
-        navBar?.setBackgroundImage(UIImage(), forBarMetrics: UIBarMetrics.Default)
-        navBar?.hideBottomHairline()
-        navBar?.translucent = true
-    }
-    
-    func setTranslucentNavigation(translucent: Bool = true, color: UIColor, tintColor: UIColor = UIColor.whiteColor(), titleColor: UIColor = UIColor.blackColor(), andFont font: UIFont = UIFont.systemFontOfSize(17)) {
-        let navBar = self.navigationController?.navigationBar
-        navBar?.setBackgroundImage(UIImage.imageWithColor(color), forBarMetrics: UIBarMetrics.Default)
-        navBar?.showBottomHairline()
-        navBar?.translucent = translucent
-        navBar?.tintColor = tintColor
-        navBar?.titleTextAttributes = [NSForegroundColorAttributeName: titleColor, NSFontAttributeName: font]
-    }
-}
-
-internal extension UINavigationBar {
-    
-    func hideBottomHairline() {
-        let navigationBarImageView = hairlineImageViewInNavigationBar(self)
-        navigationBarImageView!.hidden = true
-    }
-    
-    func showBottomHairline() {
-        let navigationBarImageView = hairlineImageViewInNavigationBar(self)
-        navigationBarImageView!.hidden = false
-    }
-    
-    private func hairlineImageViewInNavigationBar(view: UIView) -> UIImageView? {
-        if view.isKindOfClass(UIImageView) && view.bounds.height <= 1.0 {
-            return (view as! UIImageView)
-        }
-        
-        let subviews = (view.subviews )
-        for subview: UIView in subviews {
-            if let imageView: UIImageView = hairlineImageViewInNavigationBar(subview) {
-                return imageView
-            }
-        }
-        return nil
     }
 }
 

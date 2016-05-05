@@ -282,13 +282,12 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         // Configure navigation bar and layout
         automaticallyAdjustsScrollViewInsets = false
         extendedLayoutIncludesOpaqueBars = true
-        configureNavBar()
         
         // Page indicator view
         pageIndicatorView = FolioReaderPageIndicator(frame: CGRect(x: 0, y: view.frame.height-pageIndicatorHeight, width: view.frame.width, height: pageIndicatorHeight))
         view.addSubview(pageIndicatorView)
         
-        let scrubberY: CGFloat = readerConfig.shouldHideNavigationOnTap == true ? 50 : 74
+        let scrubberY: CGFloat = 50
         scrollScrubber = ScrollScrubber(frame: CGRect(x: pageWidth + 10, y: scrubberY, width: 40, height: pageHeight - 100))
         scrollScrubber.delegate = self
         view.addSubview(scrollScrubber.slider)
@@ -314,43 +313,12 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         pageIndicatorView.reloadView(updateShadow: true)
     }
 
-    func configureNavBar() {
-        let navBackground = isNight(readerConfig.nightModeMenuBackground, UIColor.whiteColor())
-        let tintColor = readerConfig.tintColor
-        let navText = isNight(UIColor.whiteColor(), UIColor.blackColor())
-        let font = UIFont(name: "Avenir-Light", size: 17)!
-        setTranslucentNavigation(color: navBackground, tintColor: tintColor, titleColor: navText, andFont: font)
-    }
-    
-    func configureNavBarButtons() {
-
-        // Navbar buttons
-        let shareIcon = UIImage(readerImageNamed: "btn-navbar-share")!.imageTintColor(readerConfig.tintColor).imageWithRenderingMode(.AlwaysOriginal)
-        let audioIcon = UIImage(readerImageNamed: "man-speech-icon")!.imageTintColor(readerConfig.tintColor).imageWithRenderingMode(.AlwaysOriginal)
-        let menuIcon = UIImage(readerImageNamed: "btn-navbar-menu")!.imageTintColor(readerConfig.tintColor).imageWithRenderingMode(.AlwaysOriginal)
-
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: menuIcon, style: UIBarButtonItemStyle.Plain, target: self, action:#selector(FolioReaderCenter.toggleMenu(_:)))
-
-        var rightBarIcons = [UIBarButtonItem]()
-
-        if readerConfig.allowSharing {
-            rightBarIcons.append(UIBarButtonItem(image: shareIcon, style: UIBarButtonItemStyle.Plain, target: self, action:#selector(FolioReaderCenter.shareChapter(_:))))
-        }
-
-        if book.hasAudio() || readerConfig.enableTTS {
-            rightBarIcons.append(UIBarButtonItem(image: audioIcon, style: UIBarButtonItemStyle.Plain, target: self, action:#selector(FolioReaderCenter.togglePlay(_:))))
-        }
-
-        navigationItem.rightBarButtonItems = rightBarIcons
-    }
-
     func reloadData() {
         loadingView.stopAnimating()
         bookShareLink = readerConfig.localizedShareWebLink
         totalPages = book.spine.spineReferences.count
 
         collectionView.reloadData()
-        configureNavBarButtons()
         
         if let position = FolioReader.defaults.valueForKey(kBookId) as? NSDictionary,
             let pageNumber = position["pageNumber"] as? Int where pageNumber > 0 {
@@ -363,51 +331,6 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     }
     
     // MARK: Status bar and Navigation bar
-    
-    func hideBars() {
-
-        if readerConfig.shouldHideNavigationOnTap == false { return }
-
-        let shouldHide = true
-        FolioReader.sharedInstance.readerContainer.shouldHideStatusBar = shouldHide
-        
-        UIView.animateWithDuration(0.25, animations: {
-            FolioReader.sharedInstance.readerContainer.setNeedsStatusBarAppearanceUpdate()
-            
-            // Show minutes indicator
-//            self.pageIndicatorView.minutesLabel.alpha = 0
-        })
-        navigationController?.setNavigationBarHidden(shouldHide, animated: true)
-    }
-    
-    func showBars() {
-        configureNavBar()
-        
-        let shouldHide = false
-        FolioReader.sharedInstance.readerContainer.shouldHideStatusBar = shouldHide
-        
-        UIView.animateWithDuration(0.25, animations: {
-            FolioReader.sharedInstance.readerContainer.setNeedsStatusBarAppearanceUpdate()
-        })
-        navigationController?.setNavigationBarHidden(shouldHide, animated: true)
-    }
-    
-    func toggleBars() {
-        if readerConfig.shouldHideNavigationOnTap == false { return }
-        
-        let shouldHide = !navigationController!.navigationBarHidden
-        if !shouldHide { configureNavBar() }
-        
-        FolioReader.sharedInstance.readerContainer.shouldHideStatusBar = shouldHide
-        
-        UIView.animateWithDuration(0.25, animations: {
-            FolioReader.sharedInstance.readerContainer.setNeedsStatusBarAppearanceUpdate()
-            
-            // Show minutes indicator
-//            self.pageIndicatorView.minutesLabel.alpha = shouldHide ? 0 : 1
-        })
-        navigationController?.setNavigationBarHidden(shouldHide, animated: true)
-    }
 
     func togglePlay(sender: UIBarButtonItem) {
         presentPlayerMenu()
@@ -416,7 +339,7 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     // MARK: Toggle menu
     
     func toggleMenu(sender: UIBarButtonItem) {
-        FolioReader.sharedInstance.readerContainer.toggleLeftPanel()
+        FolioReader.sharedInstance.readerContainer.toggleRightPanel()
     }
     
     override func didReceiveMemoryWarning() {
@@ -993,11 +916,6 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        
-        if !navigationController!.navigationBarHidden {
-            toggleBars()
-        }
-        
         scrollScrubber.scrollViewDidScroll(scrollView)
         
         // Update current reading page
@@ -1042,12 +960,12 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     
     // MARK: - Container delegate
     
-    func container(didExpandLeftPanel sidePanel: FolioReaderSidePanel) {
+    func container(didExpandRightPanel sidePanel: FolioReaderSidePanel) {
         collectionView.userInteractionEnabled = false
         FolioReader.saveReaderState()
     }
     
-    func container(didCollapseLeftPanel sidePanel: FolioReaderSidePanel) {
+    func container(didCollapseRightPanel sidePanel: FolioReaderSidePanel) {
         collectionView.userInteractionEnabled = true
         updateCurrentPage()
         
@@ -1077,8 +995,6 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     // MARK: - Fonts Menu
     
     func presentFontsMenu() {
-        hideBars()
-        
         let menu = FolioReaderFontsMenu()
         menu.modalPresentationStyle = .Custom
 
@@ -1105,8 +1021,6 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
     // MARK: - Audio Player Menu
 
     func presentPlayerMenu() {
-        hideBars()
-
         let menu = FolioReaderPlayerMenu()
         menu.modalPresentationStyle = .Custom
 

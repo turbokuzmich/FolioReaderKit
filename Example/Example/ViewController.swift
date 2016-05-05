@@ -45,7 +45,7 @@ class ViewController: UIViewController {
         
         let epubName = epubSampleFiles[sampleNum-1];
         let bookPath = NSBundle.mainBundle().pathForResource(epubName, ofType: "epub")
-        FolioReader.presentReader(parentViewController: self, withEpubPath: bookPath!, andConfig: config, shouldRemoveEpub: false)
+        FolioReader.pushReader(self.navigationController!, epubPath: bookPath!, config: config, shouldRemoveEpub: false)
     }
 
     func setCover(button: UIButton, index: Int) {

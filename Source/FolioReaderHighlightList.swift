@@ -21,21 +21,10 @@ class FolioReaderHighlightList: UITableViewController {
         
         highlights = Highlight.allByBookId((kBookId as NSString).stringByDeletingPathExtension)
         title = readerConfig.localizedHighlightsTitle
-        
-        setCloseButton()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        configureNavBar()
-    }
-    
-    func configureNavBar() {
-        let navBackground = isNight(readerConfig.nightModeMenuBackground, UIColor.whiteColor())
-        let tintColor = readerConfig.tintColor
-        let navText = isNight(UIColor.whiteColor(), UIColor.blackColor())
-        let font = UIFont(name: "Avenir-Light", size: 17)!
-        setTranslucentNavigation(color: navBackground, tintColor: tintColor, titleColor: navText, andFont: font)
     }
     
     override func didReceiveMemoryWarning() {

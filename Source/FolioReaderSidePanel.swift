@@ -185,7 +185,7 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
     // MARK: - Toolbar actions
     
     func didSelectHighlight(sender: UIBarButtonItem) {
-        FolioReader.sharedInstance.readerContainer.toggleLeftPanel()
+        FolioReader.sharedInstance.readerContainer.toggleRightPanel()
         FolioReader.sharedInstance.readerCenter.presentHighlightsList()
     }
     
@@ -198,7 +198,7 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func didSelectFont(sender: UIBarButtonItem) {
-        FolioReader.sharedInstance.readerContainer.toggleLeftPanel()
+        FolioReader.sharedInstance.readerContainer.toggleRightPanel()
         FolioReader.sharedInstance.readerCenter.presentFontsMenu()
     }
 
