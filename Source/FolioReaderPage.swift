@@ -56,15 +56,11 @@ class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRecogni
     }
     
     func webViewFrame() -> CGRect {
-        if readerConfig.shouldHideNavigationOnTap == false {
-            let statusbarHeight = UIApplication.sharedApplication().statusBarFrame.size.height
-            let navBarHeight = FolioReader.sharedInstance.readerCenter.navigationController?.navigationBar.frame.size.height
-            let navTotal = statusbarHeight + navBarHeight!
-            let newFrame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y+navTotal, width: self.bounds.width, height: self.bounds.height-navTotal)
-            return newFrame
-        } else {
-            return self.bounds
-        }
+        let statusbarHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+        let navBarHeight = FolioReader.sharedInstance.readerCenter.navigationController?.navigationBar.frame.size.height
+        let navTotal = statusbarHeight + navBarHeight!
+        let newFrame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y+navTotal, width: self.bounds.width, height: self.bounds.height-navTotal)
+        return newFrame
     }
     
     func loadHTMLString(string: String!, baseURL: NSURL!) {

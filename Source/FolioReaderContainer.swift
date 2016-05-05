@@ -93,11 +93,12 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         centerViewController.didMoveToParentViewController(self)
         
         // Add gestures
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(FolioReaderContainer.handleTapGesture(_:)))
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         tapGestureRecognizer.numberOfTapsRequired = 1
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(FolioReaderContainer.handlePanGesture(_:)))
-//        view.addGestureRecognizer(tapGestureRecognizer)
-//        view.addGestureRecognizer(panGestureRecognizer)
+        view.addGestureRecognizer(tapGestureRecognizer)
+        
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        view.addGestureRecognizer(panGestureRecognizer)
 
         // Read async book
         if (epubPath != nil) {
@@ -192,28 +193,23 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     func animateRightPanel(shouldExpand shouldExpand: Bool) {
         if (shouldExpand) {
             
-            if let width = pageWidth {
-                if isPad {
-                    centerPanelExpandedOffset = width-400
-                } else {
-                    // Always get the device width
-                    let w = UIInterfaceOrientationIsPortrait(UIApplication.sharedApplication().statusBarOrientation) ? UIScreen.mainScreen().bounds.size.width : UIScreen.mainScreen().bounds.size.height
-                    
-                    centerPanelExpandedOffset = width-(w-70)
-                }
-            }
+            let w = UIInterfaceOrientationIsPortrait(UIApplication.sharedApplication().statusBarOrientation) ? UIScreen.mainScreen().bounds.size.width : UIScreen.mainScreen().bounds.size.height
+            
+            centerPanelExpandedOffset = 70 - w
             
             currentState = .RightPanelExpanded
             delegate.container(didExpandRightPanel: rightViewController)
-            animateCenterPanelXPosition(targetPosition: CGRectGetWidth(view.frame) - centerPanelExpandedOffset)
+            animateCenterPanelXPosition(targetPosition: centerPanelExpandedOffset)
             
             // Reload to update current reading chapter
             rightViewController.tableView.reloadData()
+            navigationController?.interactivePopGestureRecognizer?.enabled = false
         } else {
             animateCenterPanelXPosition(targetPosition: 0) { finished in
                 self.delegate.container(didCollapseRightPanel: self.rightViewController)
                 self.currentState = .BothCollapsed
             }
+            navigationController?.interactivePopGestureRecognizer?.enabled = true
         }
     }
     
@@ -251,23 +247,24 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     }
     
     func handlePanGesture(recognizer: UIPanGestureRecognizer) {
-        let gestureIsDraggingFromLeftToRight = (recognizer.velocityInView(view).x > 0)
+        let gestureIsDraggingFromRightToLeft = (recognizer.velocityInView(view).x < 0)
         
         switch(recognizer.state) {
         case .Began:
-            if currentState == .BothCollapsed && gestureIsDraggingFromLeftToRight {
+            if currentState == .BothCollapsed && gestureIsDraggingFromRightToLeft {
                 currentState = .Expanding
             }
         case .Changed:
-            if currentState == .RightPanelExpanded || currentState == .Expanding && recognizer.view!.frame.origin.x >= 0 {
-                recognizer.view!.center.x = recognizer.view!.center.x + recognizer.translationInView(view).x
+            if currentState == .RightPanelExpanded || currentState == .Expanding && centerViewController.view.frame.origin.x <= 0 {
+                centerViewController.view.center.x = centerViewController.view.center.x + recognizer.translationInView(view).x
                 recognizer.setTranslation(CGPointZero, inView: view)
             }
         case .Ended:
             if rightViewController != nil {
+                let w = UIInterfaceOrientationIsPortrait(UIApplication.sharedApplication().statusBarOrientation) ? UIScreen.mainScreen().bounds.size.width : UIScreen.mainScreen().bounds.size.height
                 let gap = 20 as CGFloat
-                let xPos = recognizer.view!.frame.origin.x
-                let canFinishAnimation = gestureIsDraggingFromLeftToRight && xPos > gap ? true : false
+                let xPos = centerViewController.view.frame.origin.x + centerViewController.view.frame.size.width
+                let canFinishAnimation = gestureIsDraggingFromRightToLeft && (w - xPos) > gap ? true : false
                 animateRightPanel(shouldExpand: canFinishAnimation)
             }
         default:
