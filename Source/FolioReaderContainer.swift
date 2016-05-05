@@ -84,6 +84,8 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        automaticallyAdjustsScrollViewInsets = false
+        
         centerViewController = FolioReaderCenter()
         centerViewController.folioReaderContainer = self
         FolioReader.sharedInstance.readerCenter = centerViewController

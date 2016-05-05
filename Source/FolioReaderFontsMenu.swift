@@ -172,7 +172,6 @@ class FolioReaderFontsMenu: UIViewController, SMSegmentViewDelegate {
                 UIView.animateWithDuration(0.6, animations: {
                     self.menuView.backgroundColor = UIColor.whiteColor()
                     readerCenter.collectionView.backgroundColor = UIColor.whiteColor()
-                    readerCenter.scrollScrubber.updateColors()
                 })
                 readerSidePanel.tableView.backgroundColor = readerConfig.menuBackgroundColor
                 readerSidePanel.tableView.separatorColor = readerConfig.menuSeparatorColor
@@ -182,7 +181,6 @@ class FolioReaderFontsMenu: UIViewController, SMSegmentViewDelegate {
                 UIView.animateWithDuration(0.6, animations: {
                     self.menuView.backgroundColor = readerConfig.nightModeMenuBackground
                     readerCenter.collectionView.backgroundColor = readerConfig.nightModeBackground
-                    readerCenter.scrollScrubber.updateColors()
                 })
                 readerSidePanel.tableView.backgroundColor = readerConfig.nightModeMenuBackground
                 readerSidePanel.tableView.separatorColor = readerConfig.nightModeSeparatorColor
