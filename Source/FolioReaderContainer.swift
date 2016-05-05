@@ -97,6 +97,7 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         // Add gestures
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         tapGestureRecognizer.numberOfTapsRequired = 1
+        tapGestureRecognizer.delegate = self
         view.addGestureRecognizer(tapGestureRecognizer)
         
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
@@ -272,6 +273,13 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         default:
             break
         }
+    }
+    
+    func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let tap = gestureRecognizer as? UITapGestureRecognizer else {
+            return true
+        }
+        return centerViewController.view.frame.contains(tap.locationInView(view))
     }
     
     // MARK: - Side Panel delegate

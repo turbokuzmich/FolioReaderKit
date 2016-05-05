@@ -64,7 +64,7 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         
         screenBounds = UIScreen.mainScreen().bounds
         
-        view.backgroundColor = UIColor.greenColor()
+        view.backgroundColor = UIColor.whiteColor()
         
         // Layout
         let layout = UICollectionViewFlowLayout()
@@ -79,7 +79,7 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.pagingEnabled = true
-        collectionView.backgroundColor = UIColor.redColor()
+        collectionView.backgroundColor = UIColor.whiteColor()
         collectionView.decelerationRate = UIScrollViewDecelerationRateFast
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
@@ -147,7 +147,7 @@ class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UICollectio
         cell.webView.scrollView.delegate = self
         cell.delegate = self
         cell.backgroundColor = UIColor.clearColor()
-        cell.contentView.backgroundColor = UIColor.redColor()
+        cell.contentView.backgroundColor = UIColor.whiteColor()
         
         // Configure the cell
         let resource = book.spine.spineReferences[indexPath.row].resource

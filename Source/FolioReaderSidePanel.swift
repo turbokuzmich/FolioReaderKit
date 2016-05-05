@@ -20,15 +20,17 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
 
     weak var delegate: FolioReaderSidePanelDelegate?
     var tableView: UITableView!
-    var toolBar: UIToolbar!
-    let toolBarHeight: CGFloat = 50
+    let topOffset: CGFloat = 64
     var tocItems = [FRTocReference]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = UIColor.whiteColor()
+        
         var tableViewFrame = screenBounds()
-        tableViewFrame.size.height = tableViewFrame.height-toolBarHeight
+        tableViewFrame.origin.y = tableViewFrame.origin.y+topOffset
+        tableViewFrame.size.height = tableViewFrame.height-topOffset
         
         tableView = UITableView(frame: tableViewFrame)
         tableView.delaysContentTouches = true
@@ -38,38 +40,6 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.delegate = self
         tableView.dataSource = self
         view.addSubview(tableView)
-        
-        toolBar = UIToolbar(frame: CGRectMake(0, screenBounds().height-toolBarHeight, view.frame.width, toolBarHeight))
-        toolBar.autoresizingMask = .FlexibleWidth
-        toolBar.barTintColor = readerConfig.toolBarBackgroundColor
-        toolBar.tintColor = readerConfig.toolBarTintColor
-        toolBar.clipsToBounds = true
-        toolBar.translucent = false
-        view.addSubview(toolBar)
-        
-        let imageHighlight = UIImage(readerImageNamed: "icon-highlight")
-        let imageClose = UIImage(readerImageNamed: "icon-close")
-        let imageFont = UIImage(readerImageNamed: "icon-font")
-        let space = 70 as CGFloat
-        
-        let blackImage = UIImage.imageWithColor(UIColor(white: 0, alpha: 0.2))
-        let closeButton = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-        closeButton.setImage(imageClose, forState: UIControlState.Normal)
-        closeButton.setBackgroundImage(blackImage, forState: UIControlState.Normal)
-        closeButton.addTarget(self, action: #selector(FolioReaderSidePanel.didSelectClose(_:)), forControlEvents: UIControlEvents.TouchUpInside)
-        
-        let noSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-        noSpace.width = isPad || isLargePhone ? -20 : -16
-        let iconClose = UIBarButtonItem(customView: closeButton)
-        
-        let iconHighlight = UIBarButtonItem(image: imageHighlight, style: .Plain, target: self, action: #selector(FolioReaderSidePanel.didSelectHighlight(_:)))
-        iconHighlight.width = space
-        
-        let iconFont = UIBarButtonItem(image: imageFont, style: .Plain, target: self, action: #selector(FolioReaderSidePanel.didSelectFont(_:)))
-        iconFont.width = space
-        
-        toolBar.setItems([noSpace, iconClose, iconFont, iconHighlight], animated: false)
-        
         
         // Register cell classes
         tableView.registerClass(FolioReaderSidePanelCell.self, forCellReuseIdentifier: reuseIdentifier)
@@ -145,7 +115,7 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
         // Adjust text position
         cell.indexLabel.center = cell.contentView.center
         var frame = cell.indexLabel.frame
-        frame.origin = isSection ? CGPoint(x: 40, y: frame.origin.y) : CGPoint(x: 20, y: frame.origin.y)
+        frame.origin = isSection ? CGPoint(x: 110, y: frame.origin.y) : CGPoint(x: 90, y: frame.origin.y)
         cell.indexLabel.frame = frame
 
         return cell
@@ -170,16 +140,6 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
     
     func screenBounds() -> CGRect {
         return UIScreen.mainScreen().bounds
-    }
-    
-    // MARK: - Rotation
-    
-    override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        UIView.animateWithDuration(duration, animations: { () -> Void in
-            var frame = self.toolBar.frame
-            frame.origin.y = pageHeight-self.toolBarHeight
-            self.toolBar.frame = frame
-        })
     }
     
     // MARK: - Toolbar actions
