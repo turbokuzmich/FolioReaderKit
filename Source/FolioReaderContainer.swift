@@ -40,7 +40,7 @@ protocol FolioReaderContainerDelegate: class {
     func container(sidePanel: FolioReaderSidePanel, didSelectRowAtIndexPath indexPath: NSIndexPath, withTocReference reference: FRTocReference)
 }
 
-class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
+public class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
     var delegate: FolioReaderContainerDelegate!
     var centerViewController: FolioReaderCenter!
     var rightViewController: FolioReaderSidePanel!
