@@ -22,7 +22,6 @@ public class FolioReaderConfig: NSObject {
     public lazy var mediaOverlayColor: UIColor! = self.tintColor
     
     // Custom actions
-    public var shouldHideNavigationOnTap = true
     public var allowSharing = true
     public var enableTTS = true
     

@@ -52,7 +52,7 @@ public class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegat
     
     // MARK: - Init
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
@@ -81,7 +81,7 @@ public class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegat
     
     // MARK: - View life cicle
     
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         
         automaticallyAdjustsScrollViewInsets = false
@@ -144,7 +144,7 @@ public class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegat
         }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override public func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         showShadowForCenterViewController(true)
         
