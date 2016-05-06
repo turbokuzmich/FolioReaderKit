@@ -8,11 +8,10 @@
 
 import UIKit
 
-@objc
-protocol FolioReaderSidePanelDelegate {
-    /**
-    Notifies when the user selected some item on menu.
-    */
+internal let font = UIFont(name: "Avenir-Light", size: 17)!
+internal let attributes = [NSFontAttributeName: font]
+
+@objc protocol FolioReaderSidePanelDelegate {
     func sidePanel(sidePanel: FolioReaderSidePanel, didSelectRowAtIndexPath indexPath: NSIndexPath, withTocReference reference: FRTocReference)
 }
 
@@ -89,21 +88,11 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
         let isSection = tocReference.children.count > 0
         
         cell.indexLabel.text = tocReference.title.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-        cell.indexLabel.font = UIFont(name: "Avenir-Light", size: 17)
+        cell.indexLabel.font = font
         cell.indexLabel.textColor = readerConfig.menuTextColor
 
-        if let resource = tocReference.resource {
-            if(resource.mediaOverlay != nil){
-                let duration = book.durationFor("#"+resource.mediaOverlay);
-                let durationFormatted = (duration != nil ? duration : "")?.clockTimeToMinutesString()
-
-                cell.indexLabel.text = cell.indexLabel.text! + (duration != nil ? " - "+durationFormatted! : "");
-            }
-        }
-
         // Mark current reading chapter
-        if let currentPageNumber = currentPageNumber, reference = book.spine.spineReferences[safe: currentPageNumber-1] where tocReference.resource != nil {
-            let resource = reference.resource
+        if let currentPageNumber = currentPageNumber, resource = book.spine.spineReferences[safe: currentPageNumber - 1]?.resource where tocReference.resource != nil {
             cell.indexLabel.textColor = tocReference.resource!.href == resource.href ? readerConfig.tintColor : readerConfig.menuTextColor
         }
         
@@ -113,10 +102,7 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
         cell.backgroundColor = UIColor.clearColor()
         
         // Adjust text position
-        cell.indexLabel.center = cell.contentView.center
-        var frame = cell.indexLabel.frame
-        frame.origin = isSection ? CGPoint(x: 110, y: frame.origin.y) : CGPoint(x: 90, y: frame.origin.y)
-        cell.indexLabel.frame = frame
+        cell.adjustLabelFrame(isSection)
 
         return cell
     }
@@ -133,7 +119,14 @@ class FolioReaderSidePanel: UIViewController, UITableViewDelegate, UITableViewDa
     // MARK: - Table view data source
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 60
+        let ref = tocItems[indexPath.row]
+        let isSection = ref.children.count > 0
+        let insets = isSection ? FolioReaderSidePanelCell.sectionLabelInset : FolioReaderSidePanelCell.defaultLabelInset
+        let title: NSString = ref.title.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+        let size = UIEdgeInsetsInsetRect(tableView.bounds, insets).size
+        let height: CGFloat = ceil(title.boundingRectWithSize(size, options: [NSStringDrawingOptions.UsesLineFragmentOrigin], attributes: attributes, context: nil).height)
+
+        return height + insets.top + insets.bottom + 1
     }
     
     // MARK: - Get Screen bounds
