@@ -28,6 +28,7 @@ internal let kCurrentAudioRate = "kCurrentAudioRate"
 internal let kCurrentHighlightStyle = "kCurrentHighlightStyle"
 internal var kCurrentMediaOverlayStyle = "kMediaOverlayStyle"
 internal let kNightMode = "kNightMode"
+internal let kTeased = "kTeased"
 internal let kHighlightRange = 30
 internal var kBookId: String!
 
@@ -66,6 +67,14 @@ public class FolioReader : NSObject {
     var isReaderReady = false
     
     
+    var teased: Bool {
+        get { return FolioReader.defaults.boolForKey(kTeased) }
+        set (value) {
+            FolioReader.defaults.setBool(value, forKey: kTeased)
+            FolioReader.defaults.synchronize()
+        }
+    }
+    
     var nightMode: Bool {
         get { return FolioReader.defaults.boolForKey(kNightMode) }
         set (value) {
@@ -73,6 +82,7 @@ public class FolioReader : NSObject {
             FolioReader.defaults.synchronize()
         }
     }
+    
     var currentFontName: Int {
         get { return FolioReader.defaults.valueForKey(kCurrentFontFamily) as! Int }
         set (value) {

@@ -132,10 +132,7 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
                         self.addRightPanelViewController()
                         self.addAudioPlayer()
                         
-                        // Open panel if does not have a saved point
-                        if FolioReader.defaults.valueForKey(kBookId) == nil {
-                            self.toggleRightPanel()
-                        }
+                        self.tease()
                         
                         FolioReader.sharedInstance.isReaderReady = true
                     })
@@ -154,6 +151,26 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         if errorOnLoad {
             dismissViewControllerAnimated(true, completion: nil)
         }
+    }
+    
+    func tease() {
+        if FolioReader.sharedInstance.teased {
+            return
+        }
+        
+        FolioReader.sharedInstance.teased = true
+        
+        let view = centerViewController.view
+        let original = view.frame
+        let translated = original.translate(-50, y: 0)
+        
+        UIView.animateWithDuration(0.3, delay: 0.5, options: [UIViewAnimationOptions.CurveEaseInOut], animations: {
+            view.frame = translated
+        }, completion: { _ in
+            UIView.animateWithDuration(0.7, delay: 0.0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1.0, options: [UIViewAnimationOptions.CurveEaseInOut], animations: {
+                view.frame = original
+            }, completion: nil)
+        })
     }
     
     // MARK: CenterViewController delegate methods
@@ -288,4 +305,15 @@ class FolioReaderContainer: UIViewController, FolioReaderSidePanelDelegate {
         collapseSidePanels()
         delegate.container(sidePanel, didSelectRowAtIndexPath: indexPath, withTocReference: reference)
     }
+}
+
+extension CGRect {
+    
+    func translate(x: CGFloat, y: CGFloat) -> CGRect {
+        var clone = self
+        clone.origin.x = clone.origin.x + x
+        clone.origin.y = clone.origin.y + y
+        return clone
+    }
+    
 }
