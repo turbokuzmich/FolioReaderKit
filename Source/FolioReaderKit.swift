@@ -135,6 +135,10 @@ public class FolioReader : NSObject {
 
     // MARK: - Present Folio Reader
     
+    public class func makeReader(withEpubURL epubURL: NSURL, andConfig config: FolioReaderConfig, shouldRemoveEpub: Bool = true) -> FolioReaderContainer {
+        return makeReader(withEpubPath: epubURL.absoluteString, andConfig: config, shouldRemoveEpub: shouldRemoveEpub)
+    }
+    
     public class func makeReader(withEpubPath epubPath: String, andConfig config: FolioReaderConfig, shouldRemoveEpub: Bool = true) -> FolioReaderContainer {
         let reader = FolioReaderContainer(config: config, epubPath: epubPath, removeEpub: shouldRemoveEpub)
         FolioReader.sharedInstance.readerContainer = reader
