@@ -363,11 +363,12 @@ extension UIWebView {
                 isOneWord = true
             }
             
-            if action == #selector(UIWebView.highlight(_:))
+            if readerConfig != nil
+            && (action == #selector(UIWebView.highlight(_:))
             || (action == #selector(UIWebView.define(_:)) && isOneWord)
             || (action == #selector(UIWebView.play(_:)) && (book.hasAudio() || readerConfig.enableTTS))
             || (action == #selector(UIWebView.share(_:)) && readerConfig.allowSharing == true)
-            || (action == #selector(NSObject.copy(_:)) && readerConfig.allowSharing == true) {
+            || (action == #selector(NSObject.copy(_:)) && readerConfig.allowSharing == true)) {
                 return true
             }
             return false
